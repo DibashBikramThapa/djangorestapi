@@ -1,9 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status, viewsets
+from profileapp import serializers
 
 class HelloApiView(APIView):
     """Test API View"""
-
+    serializer_class=serializers.HelloSerializer
     def get(self, request, format=None):
         """Return a list"""
         an_apiview=[
@@ -11,27 +13,65 @@ class HelloApiView(APIView):
         ]
         return Response({'message':'hello!','an_apiview':an_apiview})
 
-    def post(self, request, format=None):
+    def post(self, request):
         """create list"""
-        creation=[
-            'posted/created'
-        ]
-        return Response({'sup':'yea','creation':creation})
+        serializer=self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            name = serializer.validated_data.get('name')
+            message=f'Hello {name}!'
+            return Response({'message':message})
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
-    def patch(self, request, format=None):
-        """edit list"""
-        patch=[
-            'patched/created'
-        ]
-        return Response({'sup':'yea','patch':patch})
-
-    def put(self, request, format=None):
-        """edit partially"""
-        put=['we put']
-        return Response({'sup':'yea','put':put})
+    def put(self, request, pk=None):
+        """edit object"""
+        return Response({'method':'PUT'})
 
 
-    def delete(self, request,format=None):
+    def patch(self, request, pk=None):
+        """edit object partially"""
+        return Response({'method':'PATCH'})
+
+
+    def delete(self, request,pk=None):
         """hell yea delete"""
         delete=['delete','ok']
         return Response({'delete':delete})
+
+
+class HellowViewSet(viewsets.ViewSet):
+    """Test viewset api"""
+    serializer_class=serializers.HelloSerializer
+    def list(self, request):
+        """return list"""
+        list=['list, create, retrieve, update,partial_update. delete']
+
+        return Response({'hi':'hi in list','list':list})
+
+    def create(self, request):
+        """create new message"""
+        serializer=self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            name = serializer.validated_data.get('name')
+            message=f'Hello {name}!'
+            return Response({'message':message})
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+
+    def retrieve(self, request, pk=None):
+        """handle object ny ID"""
+        return Response({'http_method':'GET'})
+
+    def update(self, request, pk=None):
+        """update object"""
+        return Response({'http_method':'PUT'})
+
+    def partial_update(self, request, pk=None):
+        return Response({'http_method':'partial_update'})
+
+    def destroy(self, request, pk=None):
+        return Response({'http_method':'delete'})
