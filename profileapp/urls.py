@@ -8,7 +8,7 @@ app_name = 'profileapp'
 router = DefaultRouter()
 router.register('hellowviewset',views.HellowViewSet, basename='hellowviewset')
 router.register('profile', views.UserProfileViewSet)
-
+router.register('feed', views.UserProfileFeedViewSet)
 
 urlpatterns = [
     path('hellowview/',views.HelloApiView.as_view()),
