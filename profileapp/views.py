@@ -1,11 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, filters
 from profileapp import serializers
 from profileapp import models
 
 from rest_framework.authentication import TokenAuthentication
 from profileapp import permissions
+
+
 
 class HelloApiView(APIView):
     """Test API View"""
@@ -87,3 +89,5 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     queryset=models.UserProfile.objects.all()
     authentication_classes=(TokenAuthentication,)
     permission_classes=(permissions.UpdateOwnProfile,)
+    filter_backends=(filters.SearchFilter,)
+    search_fields=('username','email',)
